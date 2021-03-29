@@ -1,0 +1,168 @@
+<div class="modal-header">
+    <h5 class="item-title-name m-0 pb-2 pt-2"><a target="_blank" [href]="media.getWebUrl()">{{media.Name}}</a></h5>
+</div>
+<div class="modal-body">
+    <div class="details">
+        <div class="detail clearfix type">
+            <label>Type:</label>
+            <span>{{columns.Type.output(media.Type)}}</span>
+        </div>
+        <div class="detail clearfix genre">
+            <label>Genre:</label>
+            <span>{{media.Genres | joinStrings}}</span>
+        </div>
+        <div class="detail clearfix year">
+            <label>Year:</label>
+            <span>{{media.ProductionYear}}</span>
+        </div>
+        <div class="detail clearfix language">
+            <label>Language:</label>
+            <span>{{columns.Language.output(media.Language, media)}}</span>
+        </div>
+        <div class="detail clearfix created">
+            <label>Created:</label>
+            <span>{{media.DateCreated | date: 'dd.MM.yy HH:mm:ss'}}</span>
+        </div>
+        <div class="detail clearfix played">
+            <label>Played:</label>
+            <span>{{media.getPlayedByUsersList() | joinStrings}}</span>
+        </div>
+        <div class="detail clearfix">
+            <label>Size:</label>
+            <span>{{columns.Size.output(media.Size)}}</span>
+        </div>
+        <div class="detail clearfix" *ngIf="media.Path">
+            <label>Path:</label>
+            <span>{{media.Path}}</span>
+        </div>
+        <div class="detail clearfix" *ngIf="media.CommunityRating">
+            <label>Ratings:</label>
+            <span>{{media.CommunityRating}}</span>
+        </div>
+        <div class="detail clearfix" *ngIf="media.Overview">
+            <label>Overview:</label>
+            <span>{{media.Overview}}</span>
+        </div>
+        <div class="mt-3"></div>
+        <div class="detail clearfix table" *ngIf="media.getPlayedByUsers().length">
+            <h5 class="pt-1 pb-1 m-0">Played</h5>
+            <table>
+                <thead>
+                <tr>
+                    <th>UserName</th>
+                    <th>Date</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let u of media.getPlayedByUsers()">
+                    <td>{{u.User}}</td>
+                    <td>{{u.Date | date: 'dd.MM.yy HH:mm:ss'}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="detail clearfix table" *ngIf="media.getVideoStreams().length">
+            <h5 class="pt-1 pb-1 m-0">Video Streams</h5>
+            <table>
+                <thead>
+                <tr>
+
+                    <th>Res</th>
+                    <th>AspectRatio</th>
+                    <th>BitRate</th>
+                    <th>BitDepth</th>
+                    <th>Profile</th>
+                    <th>Codec</th>
+                    <th>ColorSpace</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let s of media.getVideoStreams()">
+                    <td>{{s.Width ? [s.Width, s.Height].join('x') : '-'}}</td>
+                    <td>{{s.AspectRatio}}</td>
+                    <td>{{s.BitRate}}</td>
+                    <td>{{s.BitDepth}}</td>
+                    <td>{{s.Profile}}</td>
+                    <td>{{s.Codec}}</td>
+                    <td>{{s.ColorSpace}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="detail clearfix table" *ngIf="media.getAudioStreams().length">
+            <h5 class="pt-1 pb-1 m-0">Audio Streams</h5>
+            <table>
+                <thead>
+                <tr>
+                    <th>Lang</th>
+                    <th>BitRate</th>
+                    <th>Codec</th>
+                    <th>Channels</th>
+                    <th>SampleRate</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let s of media.getAudioStreams()">
+                    <td>{{s.Language}}</td>
+                    <td>{{s.BitRate}}</td>
+                    <td>{{s.Codec}}</td>
+                    <td>{{s.Channels}}</td>
+                    <td>{{s.SampleRate}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="detail clearfix table" *ngIf="media.getSubTileStreams().length">
+            <h5 class="pt-1 pb-1 m-0">Sub Titles</h5>
+            <table>
+                <thead>
+                <tr>
+                    <th>Lang</th>
+                    <th>BitRate</th>
+                    <th>Codec</th>
+                    <th>Channels</th>
+                    <th>SampleRate</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr *ngFor="let s of media.getSubTileStreams()">
+                    <td>{{s.Language}}</td>
+                    <td>{{s.BitRate}}</td>
+                    <td>{{s.Codec}}</td>
+                    <td>{{s.Channels}}</td>
+                    <td>{{s.SampleRate}}</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="clearfix"></div>
+    <div *ngIf="media.Type === EmbyMediaType.Series && media.Seasons.length">
+        <div class="pt-4"></div>
+        <div class="clearfix card sub-item" *ngFor="let season of media.Seasons | sortObjectCollection: 'IndexNumber':  1">
+            <a data-toggle="collapse"
+               (click)="season.Collapsed = !season.Collapsed"
+               [attr.aria-expanded]="!season.Collapsed" aria-controls="sub-item-{{season.Id}}"
+            >{{season.Name}}</a>
+            <div class="collapse sub-item-content" id="sub-item-{{season.Id}}" [collapse]="season.Collapsed" [isAnimated]="true">
+                <div class="inner">
+                    <media-item-detail class="media-item-detail" [media]="season" [columns]="columns"></media-item-detail>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div *ngIf="media.Type === EmbyMediaType.Season && media.Episodes.length">
+        <div class="pt-4"></div>
+        <div class="clearfix card sub-item" *ngFor="let episode of media.Episodes | sortObjectCollection: 'IndexNumber':  1">
+            <a data-toggle="collapse"
+               (click)="episode.Collapsed = !episode.Collapsed"
+               [attr.aria-expanded]="!episode.Collapsed" aria-controls="sub-item-{{episode.Id}}"
+            >{{episode.IndexNumber}} - {{episode.Name}}</a>
+            <div class="collapse sub-item-content" id="sub-item-{{episode.Id}}" [collapse]="episode.Collapsed" [isAnimated]="true">
+                <div class="inner">
+                    <media-item-detail class="media-item-detail" [media]="episode" [columns]="columns"></media-item-detail>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

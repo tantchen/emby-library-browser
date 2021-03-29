@@ -1,0 +1,27 @@
+﻿<!-- nav -->
+<nav class="navbar navbar-expand navbar-dark" *ngIf="currentUser">
+    <a class="navbar-brand" (click)="toggleNavigation(1)">
+        <fa-icon [icon]="fa.menu"></fa-icon>
+        <span class="pl-2">
+            {{pageTitle}}
+        </span>
+    </a>
+    <div class="container" [class.slide-out]="navContainerShow === 0" [class.slide-in]="navContainerShow === 1" (click)="toggleNavigation(0,$event)">
+        <a class="navbar-brand">
+            <fa-icon [icon]="fa.menu"></fa-icon>
+        </a>
+        <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+        </div>
+        <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link logout" (click)="logout()">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- main app container -->
+<div class="container">
+    <router-outlet></router-outlet>
+</div>

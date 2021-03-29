@@ -1,0 +1,214 @@
+/* You can add global styles to this file, and also import other style files */
+html, body {
+  height: 100%;
+}
+
+:focus {
+  outline: none;
+  outline-color: transparent;
+  outline-style: none;
+  outline-width: 0;
+}
+
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+.navbar {
+  background-color: #101010;
+
+  .navbar-brand {
+    display: none;
+  }
+
+  .navbar-nav {
+    .dropdown-menu .dropdown-item.active {
+      background-color: transparent;
+    }
+  }
+}
+
+.emby-component.container {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+//app > .container, .emby-component.container {
+//  max-width: calc(100% - 40px);
+//}
+
+.container {
+  max-width: 100%;
+}
+
+select {
+  appearance: none;
+}
+
+@media (max-width: 612px) {
+  .navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1;
+
+    .navbar-brand {
+      display: block;
+    }
+
+    .container {
+      display: block;
+      background-color: #101010;
+      position: absolute;
+      width: 100vw;
+      height: 100vh;
+      right: -100vw;
+      max-width: unset;
+      top: 0;
+      padding: 0.5rem 1rem;
+
+      &.slide-out {
+        right: -100vw;
+        transition: right 200ms;
+
+      }
+
+      &.slide-in {
+        right: 0;
+        transition: right 200ms;
+      }
+
+      .navbar-collapse {
+        order: unset;
+        display: block !important;
+
+        &:last-child {
+          padding-top: 30px;
+        }
+
+        .navbar-nav {
+          flex-direction: column;
+
+          .dropdown-menu {
+            position: relative;
+            background-color: transparent;
+            border: none;
+          }
+        }
+      }
+    }
+  }
+  body > app > .container {
+    padding-top: 60px;
+
+    .fixed-table-pagination {
+      padding-left: 10px;
+      padding-right: 10px;
+
+      ul.pagination {
+        li.pagination-page.page-item {
+          display: none;
+        }
+      }
+    }
+  }
+  body .media-details-dialog {
+    max-height: calc(100vh - 20px);
+  }
+  .account-component, .user-component, .backup-component {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  .hide-on-phone {
+    display: none !important;
+  }
+
+}
+
+
+a, .pointer {
+  cursor: pointer
+}
+
+.v-hidden {
+  visibility: hidden;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: .1;
+  }
+
+  50% {
+    opacity: .5;
+  }
+
+  100% {
+    opacity: .1;
+  }
+}
+
+.btn-group-tn > .btn, .btn-tn {
+  padding: .10rem .25rem;
+  font-size: .775rem;
+  line-height: 1.4;
+  border-radius: .2rem;
+}
+
+.dropdown-menu{
+  background-color: #424242;
+  min-width: 0;
+}
+
+div#filters {
+  div.buttons {
+    button {
+    }
+  }
+
+  div.filters {
+    div.form-group {
+      //width: calc(100% / 7);
+      padding-right: 10px;
+      float: left;
+
+      label {
+        display: block;
+        width: 100%;
+      }
+
+      &.has-switch {
+        a {
+          height: 38px;
+          background-color: #6c757d;
+          color: #fff;
+          line-height: 38px;
+          text-align: center;
+          width: 20px;
+          display: block;
+          float: left;
+          border-top-left-radius: .25rem;
+          border-bottom-left-radius: .25rem;
+        }
+
+        select, input {
+          border-top-left-radius: 0;
+          border-bottom-left-radius: 0;
+          float: left;
+          width: calc(100% - 20px);
+        }
+      }
+
+      &:last-child {
+        padding-right: 0;
+      }
+
+      &.name {
+        float: none;
+        width: 100%;
+        padding-right: 0;
+      }
+    }
+  }
+}

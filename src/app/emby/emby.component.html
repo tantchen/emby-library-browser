@@ -1,0 +1,238 @@
+﻿<div class="emby-component container pt-1" id="emby-content">
+    <div [collapse]="t.trashCollapse" [isAnimated]="true" class="card bootstrap-table bootstrap4" id="trash" data-parent="#emby-content" *ngIf="trashMediaItems.length">
+        <table class="table table-bordered table-hover">
+            <thead>
+            <tr>
+                <th style="width: 30px"></th>
+                <th style="width: 75%">Name</th>
+                <th style="width: 10%">Type</th>
+                <th style="width: 15%">Size</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let item of trashMediaItems">
+                <td><span><a (click)="item.Selected = false; updateTrash()"><fa-icon [icon]="fa.close"></fa-icon></a></span></td>
+                <td><span>{{t.columnsByKey.Name.output(item.Name)}}</span></td>
+                <td><span>{{t.columnsByKey.Type.output(item.Type)}}</span></td>
+                <td><span>{{t.columnsByKey.Size.output(item.Size)}}</span></td>
+            </tr>
+            <tr class="summary">
+                <td></td>
+                <td></td>
+                <td></td>
+                <td><span>{{trashFileSize | fileSize}}</span></td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="pt-2">
+            <button class="btn btn-primary btn-danger"
+                    type="button"
+                    aria-label="Delete selected items"
+                    title="Delete selected items"
+                    (click)="confirmDeleteItems()"
+            >Delete Items
+            </button>
+        </div>
+    </div>
+    <div [collapse]="t.filterCollapse" [isAnimated]="true" class="card" id="filters" data-parent="#emby-content">
+        <div class="row filters clearfix container" *ngFor="let columns of t.filters.others | chunk: [6]">
+            <div class="form-group {{column.key | lowercase}} col-{{12 / 6}}"
+                 [ngClass]="{'has-switch': !!column.filter.switchValues}"
+                 *ngFor="let column of columns">
+                <label class="col-form-label-sm" for="filter-{{column.key}}">{{column.label || column.key}}</label>
+                <ng-template [ngIf]="column.filter.type === 'text'">
+                    <input id="filter-{{column.key}}" class="form-control form-control-sm" type="text" [formControl]="column.filterValue"/>
+                </ng-template>
+                <ng-template [ngIf]="column.filter.type === 'select'">
+                    <select id="filter-{{column.key}}" class="form-control form-control-sm" [formControl]="column.filterValue">
+                        <option *ngFor="let o of column.filter.options" [ngValue]="o.value">{{o.label}}</option>
+                    </select>
+                </ng-template>
+                <a *ngIf="column.filter.switchValues" (click)="column.filter.handleSwitch()">{{column.filter.filterArgs[1]}}</a>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6 buttons" *ngIf="libraries">
+                <p>
+                    <a (click)="setSelectedItems(libraries,false)">
+                        <fa-icon *ngIf="activeLibraryCount === libraries.length" [icon]="fa.toggleOn"></fa-icon>
+                    </a>
+                    <a (click)="setSelectedItems(libraries,true)">
+                        <fa-icon *ngIf="activeLibraryCount !== libraries.length" [icon]="fa.toggleOff"></fa-icon>
+                    </a>
+                    Libraries
+                </p>
+                <div class="rounded">
+                    <button type="button"
+                            *ngFor="let l of libraries | isActive: 'MediaItems'  | sortObjectCollection: 'Name': 1"
+                            (click)="toggleLibraryActivation(l)"
+                            [ngClass]="{'btn-outline-primary': !l.Selected,'btn-primary': l.Selected}"
+                            class="btn btn-sm">{{l.Name}}</button>
+                </div>
+            </div>
+            <div class="col-6 buttons" *ngIf="users">
+                <p>
+                    <a (click)="setSelectedItems(users,false)">
+                        <fa-icon *ngIf="activeUserCount === users.length" [icon]="fa.toggleOn"></fa-icon>
+                    </a>
+                    <a (click)="setSelectedItems(users,true)">
+                        <fa-icon *ngIf="activeUserCount !== users.length" [icon]="fa.toggleOff"></fa-icon>
+                    </a>
+                    Users
+                </p>
+                <div class="rounded">
+                    <button *ngFor="let u of users | sortObjectCollection: 'Name': 1" type="button"
+                            (click)="toggleUserActivation(u)"
+                            [ngClass]="{'btn-outline-primary': !u.Selected,'btn-primary': u.Selected}"
+                            class="btn btn-sm">{{u.Name}}</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="card mt-4">
+        <div class="progress" style="height: 5px;">
+            <div class="progress-bar" role="progressbar"
+                 *ngIf="progressPercent < 100"
+                 [ngStyle]="{width: progressPercent + '%'}" aria-valuenow="{{progressPercent}}" aria-valuemin="0" aria-valuemax="100"></div>
+        </div>
+        <div class="bootstrap-table bootstrap4">
+            <div class="table-header row">
+                <div class="search col-7">
+                    <div class="form-group">
+                        <input id="filter-{{t.filters.main.key}}" class="form-control" type="text" [formControl]="t.filters.main.filterValue"/>
+                    </div>
+                </div>
+                <div class="table-control col-5">
+                    <div class="float-right">
+                        <div class="keep-open btn-group" title="Columns" dropdown [insideClick]="true">
+                            <button class="btn"
+                                    [ngClass]="{'btn-outline-primary': t.resultMode === ResultMode.Default,'btn-primary': t.resultMode === ResultMode.Duplicate}"
+                                    type="button"
+                                    name="toggle"
+                                    aria-label="Show card view"
+                                    title="Show card view"
+                                    [disabled]="loading"
+                                    (click)="switchResultMode()">
+                                <span *ngIf="t.resultMode === ResultMode.Default && duplicateItems.length" class="badge badge-pill badge-dark">{{duplicateItems.length}}</span>
+                                <span *ngIf="t.resultMode === ResultMode.Duplicate && mediaItems.length" class="badge badge-pill badge-dark">{{mediaItems.length}}</span>
+                                Duplicate
+                            </button>
+                            <a class="btn btn-primary"
+                               role="button"
+                               aria-controls="trash"
+                               [attr.aria-expanded]="!t.trashCollapse"
+                               (click)="t.trashCollapse = !t.trashCollapse; t.filterCollapse = true"
+                               [ngClass]="{disabled: (loading || !trashMediaItems.length)}"
+                            >
+                                <span *ngIf="trashMediaItems.length" class="badge badge-pill badge-danger">{{trashMediaItems.length}}</span>
+                                <fa-icon [icon]="fa.trash"></fa-icon>
+                            </a>
+                            <a class="btn btn-primary"
+                               role="button"
+                               aria-controls="filters"
+                               (click)="t.filterCollapse = !t.filterCollapse; t.trashCollapse = true"
+                               [attr.aria-expanded]="!t.filterCollapse"
+                               [ngClass]="{disabled: (loading)}"
+                            >
+                                <span *ngIf="activeFilterCount" class="badge badge-pill badge-dark">{{activeFilterCount}}</span>
+                                <fa-icon [icon]="fa.filter"></fa-icon>
+                            </a>
+                            <button dropdownToggle class="btn btn-primary dropdown-toggle"
+                                    type="button"
+                                    aria-label="Columns"
+                                    title="Columns"
+                                    aria-expanded="false"
+                                    aria-controls="columns-dropdown"
+                                    [disabled]="loading"
+                            >
+                                <fa-icon [icon]="fa.table"></fa-icon>
+                                <span class="caret"></span>
+                            </button>
+                            <div *dropdownMenu
+                                 aria-labelledby="columns-dropdown"
+                                 id="columns-dropdown"
+                                 class="manage-columns dropdown-menu dropdown-menu-right">
+                                <label *ngFor="let column of t.columns | isActive: 'asColumn'"
+                                       class="dropdown-item dropdown-item-marker dropdown-item-column-{{column.key}}">
+                                    <input type="checkbox" data-field="{{column.key}}" [formControl]="column.isActive">
+                                    <span>{{column.label || column.key}}</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <table class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                    <th *ngFor="let column of t.activeColumns"
+                        [ngStyle]="{width: column | columnWidth: t.activeColumns}"
+                    >
+                        <ng-template [ngIf]="column.sortDir !== false">
+                            <a class="pointer sort" (click)="flipSort(column)">
+                                <span>{{column.key === 'Selected' ? '' : (column.label || column.key)}}</span>
+                                <fa-icon class="sort" *ngIf="column.sortDir === 0" [icon]="fa.sort"></fa-icon>
+                                <fa-icon class="sort-up" *ngIf="column.sortDir === 1" [icon]="fa.sortUp"></fa-icon>
+                                <fa-icon class="sort-down" *ngIf="column.sortDir === -1" [icon]="fa.sortDown"></fa-icon>
+                            </a>
+                        </ng-template>
+                        <ng-template [ngIf]="column.sortDir === false">
+                            <span>
+                                {{column.key === 'Selected' ? '' : (column.label || column.key)}}
+                            </span>
+                        </ng-template>
+                    </th>
+                </tr>
+                </thead>
+                <tbody *ngIf="loading" class="loading">
+                <tr *ngFor="let x of [0,0,0,0,0,0,0,0,0]">
+                    <td *ngFor="let column of t.activeColumns"><span>&nbsp;</span></td>
+                </tr>
+                </tbody>
+                <tbody *ngIf="tableItems && tableItems.length">
+                <tr *ngFor="let item of tableItems">
+                    <td *ngFor="let column of t.activeColumns"
+                        (click)="column.key !== 'Selected' ? selectItem(item) : null"
+                    >
+                        <span class="pointer" *ngIf="column.key !== 'Selected'">{{column.output(item[column.key], item)}}</span>
+                        <input *ngIf="column.key === 'Selected' && item.hasDeletePermission()"
+                               type="checkbox" [checked]="item[column.key]" (click)="item[column.key] = !item[column.key]; updateTrash()"/>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="fixed-table-pagination pt-2 clearfix" *ngIf="tableItems && tableItems.length">
+        <div class="btn-group dropdown float-right" dropdown [dropup]="true">
+            <button dropdownToggle class="btn btn-primary btn-sm dropdown-toggle"
+                    type="button"
+                    id="button-animated"
+                    aria-controls="dropdown-animated">
+                {{t.limit}}
+            </button>
+            <ul *dropdownMenu
+                id="dropdown-animated"
+                class="dropdown-menu dropdown-menu-right"
+                aria-labelledby="button-animated">
+                <li *ngFor="let l of [10,20,50,100]"
+                    (click)="pageLimit = l"
+                    role="menuitem"
+                    class="dropdown-item pointer">{{l}}
+                </li>
+            </ul>
+        </div>
+        <pagination
+                *ngIf="t.pages > 1"
+                [boundaryLinks]="true"
+                [totalItems]="t.pages"
+                [itemsPerPage]="1"
+                [maxSize]="7"
+                [(ngModel)]="pageNumber"
+                previousText="&lsaquo;"
+                nextText="&rsaquo;"
+                firstText="&laquo;"
+                lastText="&raquo;">
+        </pagination>
+    </div>
+</div>

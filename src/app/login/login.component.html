@@ -1,0 +1,35 @@
+﻿<div class="col-md-6 offset-md-3 mt-5">
+    <div class="card">
+        <div class="card-body">
+            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+                <div class="form-group">
+                    <label for="url">Emby Url</label>
+                    <input id="url" type="text" formControlName="url" class="form-control" [ngClass]="{ 'is-invalid': (submitted || f.url.touched) && f.url.errors }" />
+                    <div *ngIf="submitted  && f.url.errors" class="invalid-feedback">
+                        <div *ngIf="f.url.hasError('required')">Emby Url is required</div>
+                        <div *ngIf="f.url.hasError('pattern')">Emby Url is not valid</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input id="username" type="text" formControlName="username" class="form-control" [ngClass]="{ 'is-invalid': (submitted || f.username.touched) && f.username.errors }" />
+                    <div *ngIf="submitted  && f.username.errors" class="invalid-feedback">
+                        <div *ngIf="f.username.hasError('required')">Username is required</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input id="password" type="password" formControlName="password" class="form-control" [ngClass]="{ 'is-invalid': (submitted || f.password.touched) && f.password.errors }" />
+                    <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+                        <div *ngIf="f.password.hasError('required')">Password is required</div>
+                    </div>
+                </div>
+                <button [disabled]="loading" class="btn btn-primary btn-sm">
+                    <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                    Login
+                </button>
+                <div *ngIf="error" class="alert alert-danger mt-3 mb-0">{{error}}</div>
+            </form>
+        </div>
+    </div>
+</div>

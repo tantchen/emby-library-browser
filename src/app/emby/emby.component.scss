@@ -1,0 +1,197 @@
+.container.emby-component {
+  div#filters {
+    padding: 20px;
+
+    p{
+      margin: 0;
+    }
+
+    div.buttons {
+      div {
+        padding: 5px;
+        button {
+          margin-right: 2px;
+          margin-bottom: 2px;
+          line-height: 0.8;
+          font-size: .7rem;
+        }
+      }
+
+    }
+
+    div.filters {
+      padding-right: 0;
+      padding-left: 0;
+      div.form-group {
+        padding-right: 10px;
+        float: left;
+
+        label {
+          display: block;
+          width: 100%;
+          margin: 0;
+        }
+
+        &.has-switch {
+          a {
+            height: 31px;
+            line-height: 31px;
+            font-size: .8rem;
+            background-color: darken(#2c2c2c,10);
+            color: #fff;
+            text-align: center;
+            width: 20px;
+            display: block;
+            float: left;
+            border-top-left-radius: .25rem;
+            border-bottom-left-radius: .25rem;
+          }
+
+          select, input {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            float: right;
+            width: calc(100% - 20px);
+          }
+        }
+
+        &:last-child {
+          padding-right: 0;
+        }
+
+        &.name {
+          float: none;
+          width: 100%;
+          padding-right: 0;
+        }
+      }
+    }
+  }
+
+  div#trash {
+    padding: 20px;
+
+    table {
+      tr {
+        td {
+          &:first-child {
+            a {
+              display: block;
+              text-align: center;
+            }
+          }
+        }
+        &.summary {
+          td {
+            visibility: hidden;
+
+            &:last-child {
+              visibility: inherit;
+            }
+
+          }
+        }
+      }
+
+    }
+  }
+
+  div.manage-columns {
+    label {
+      &.dropdown-item-column-Selected{
+        display: none;
+      }
+      margin-bottom: 0;
+
+      span {
+        padding-left: 10px;
+      }
+    }
+  }
+
+  div.fixed-table-pagination {
+    margin-top: 20px;
+  }
+
+  div.bootstrap-table {
+    margin-bottom: 0;
+
+    div.table-header {
+      padding: 10px;
+
+      div.form-group {
+        margin-bottom: 0;
+      }
+    }
+  }
+
+  table {
+    table-layout: fixed;
+    margin-bottom: 0;
+
+    tbody.loading {
+      tr td span {
+        background: #8d8d8d;
+        animation: pulse 2s infinite;
+      }
+    }
+
+    tbody {
+      tr td.display-card div {
+        float: none;
+        label, span {
+          display: block;
+          float: left;
+        }
+
+        label {
+          width: 20%;
+          font-weight: bold;
+          margin-bottom: 0;
+        }
+
+        span {
+          width: calc(80% - 40px);
+        }
+
+        &.Selected{
+          float: right;
+        }
+      }
+    }
+
+    thead{
+      th {
+        span{
+          width: calc(100% - 10px);
+          float: left;
+        }
+      }
+    }
+
+    th, td {
+      padding: 5px;
+      &:first-child {
+        fa-icon{
+          float: none !important;
+        }
+      }
+      fa-icon{
+        &.sort,&.sort-up,&.sort-down{
+          float: right;
+        }
+        &.sort{
+          opacity: .2;
+        }
+      }
+
+      span {
+        display: block;
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+    }
+  }
+}

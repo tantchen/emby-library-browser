@@ -1,0 +1,130 @@
+$borderColor: rgba(0, 0, 0, 0.15);
+$borderLightColor: #1d1d1d;
+$inputDisabledBG: #585858;
+$primaryColor: #52b54b;
+$bg1: #2c2c2c;
+.container {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
+  background-color: transparent;
+  border-color: $borderColor $borderColor $borderColor;
+}
+
+.nav-tabs .nav-link:focus, .nav-tabs .nav-link:hover {
+  border-color: $borderLightColor $borderLightColor $borderLightColor;
+}
+
+.nav-tabs .nav-link {
+  border-bottom: none !important;
+  margin-bottom: 0;
+}
+
+.card .form-control{
+    background-color: darken(#2c2c2c,4);
+    &:not(:focus){
+      border-color: darken(#2c2c2c,10);
+    }
+}
+
+.form-control {
+  &[readonly],&[disabled] {
+    background-color: $inputDisabledBG;
+  }
+
+  &:focus {
+    box-shadow: none;
+  }
+
+}
+
+.table-hover tbody tr:hover {
+  color: #f8f9fa;
+}
+
+.table {
+  color: #f8f9fa;
+
+  thead {
+    th {
+      border-color: $borderColor;
+    }
+  }
+
+  tbody {
+
+    td {
+      border-color: $borderColor;
+    }
+  }
+}
+
+.pagination .page-item {
+  .page-link {
+    &:focus, &:hover {
+      background-color: lighten($bg1, 10);
+      border-color: $borderColor;
+    }
+  }
+
+  &.disabled {
+    .page-link {
+      background-color: transparent;
+      border: 1px solid #1b1a1a;
+
+      &:focus, &:hover {
+        background-color: transparent;
+      }
+    }
+  }
+}
+
+.border-bottom {
+  border-bottom-color: $borderColor !important;
+}
+
+.border-top {
+  border-top-color: $borderColor !important;
+}
+
+.border-left {
+  border-left-color: $borderColor !important;
+}
+
+.border-right {
+  border-left-color: $borderColor !important;
+}
+
+.modal-header, .nav-tabs {
+  border-bottom-color: $borderColor;
+}
+.fixed-table-pagination{
+  ul.pagination{
+    width: calc(100% - 100px);
+  }
+}
+.btn{
+  box-shadow: none !important;
+  &:focus,&.active,&.active:focus{
+    box-shadow: none;
+  }
+}
+.btn-outline-primary:not(:disabled):not(.disabled).active,
+.btn-outline-primary:not(:disabled):not(.disabled):active,
+.show>.btn-outline-primary.dropdown-toggle,
+.btn-primary.focus, .btn-primary:focus,
+.btn-primary:not(:disabled):not(.disabled).active,
+.btn-primary:not(:disabled):not(.disabled):active,
+.show>.btn-primary.dropdown-toggle{
+  background-color: $primaryColor;
+  border-color: $primaryColor;
+}
+.btn-outline-primary:not(:disabled):not(.disabled){
+  &:not(.active),&:not(:active){
+    &:hover{
+        background-color: rgba($primaryColor,.3);
+    }
+  }
+}
